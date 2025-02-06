@@ -28,10 +28,17 @@ document.addEventListener('touchstart', enableAudio);
 document.addEventListener('DOMContentLoaded', () => {
     const startAudioButton = document.getElementById('startAudio');
     if (startAudioButton) {
+        // When user clicks the Play Music button, enable audio and hide the button.
         startAudioButton.addEventListener('click', function() {
             enableAudio();
             this.style.display = 'none';
         });
+        // Automatically click the Play Music button after 2 seconds if not already hidden.
+        setTimeout(() => {
+            if (startAudioButton.style.display !== 'none') {
+                startAudioButton.click();
+            }
+        }, 2000);
     }
 });
 
@@ -40,7 +47,7 @@ const fetchData = () => {
     fetch("customize.json")
         .then(data => data.json())
         .then(data => {
-            dataArr = Object.keys(data);
+            const dataArr = Object.keys(data);
             dataArr.map(customData => {
                 if (data[customData] !== "") {
                     if (customData === "imagePath" || customData === "image2Path") {
@@ -51,9 +58,7 @@ const fetchData = () => {
                         document.querySelector(`[data-node-name*="${customData}"]`).innerText = data[customData];
                     }
                 }
-
-                // Check if the iteration is over
-                // Run animation if so
+                // Check if iteration is complete, then run animations.
                 if (dataArr.length === dataArr.indexOf(customData) + 1) {
                     animationTimeline();
                     playAudio(); // Start playing audio when animation begins
@@ -64,17 +69,12 @@ const fetchData = () => {
 
 // Animation Timeline
 const animationTimeline = () => {
-    // Spit chars that needs to be animated individually
+    // Split characters for individual animation
     const textBoxChars = document.getElementsByClassName("hbd-chatbox")[0];
     const hbd = document.getElementsByClassName("wish-hbd")[0];
 
-    textBoxChars.innerHTML = `<span>${textBoxChars.innerHTML
-        .split("")
-        .join("</span><span>")}</span`;
-
-    hbd.innerHTML = `<span>${hbd.innerHTML
-        .split("")
-        .join("</span><span>")}</span`;
+    textBoxChars.innerHTML = `<span>${textBoxChars.innerHTML.split("").join("</span><span>")}</span>`;
+    hbd.innerHTML = `<span>${hbd.innerHTML.split("").join("</span><span>")}</span>`;
 
     const ideaTextTrans = {
         opacity: 0,
@@ -93,78 +93,18 @@ const animationTimeline = () => {
     const tl = new TimelineMax();
 
     tl
-        .to(".container", 0.1, {
-            visibility: "visible"
-        })
-        .from(".one", 0.7, {
-            opacity: 0,
-            y: 10
-        })
-        .from(".two", 0.4, {
-            opacity: 0,
-            y: 10
-        })
-        .to(
-            ".one",
-            0.7,
-            {
-                opacity: 0,
-                y: 10
-            },
-            "+=2.5"
-        )
-        .to(
-            ".two",
-            0.7,
-            {
-                opacity: 0,
-                y: 10
-            },
-            "-=1"
-        )
-        .from(".three", 0.7, {
-            opacity: 0,
-            y: 10
-            // scale: 0.7
-        })
-        .to(
-            ".three",
-            0.7,
-            {
-                opacity: 0,
-                y: 10
-            },
-            "+=2"
-        )
-        .from(".four", 0.7, {
-            scale: 0.2,
-            opacity: 0
-        })
-        .from(".fake-btn", 0.3, {
-            scale: 0.2,
-            opacity: 0
-        })
-        .staggerTo(
-            ".hbd-chatbox span",
-            0.5,
-            {
-                visibility: "visible"
-            },
-            0.05
-        )
-        .to(".fake-btn", 0.1, {
-            backgroundColor: "rgb(127, 206, 248)"
-        })
-        .to(
-            ".four",
-            0.5,
-            {
-                scale: 0.2,
-                opacity: 0,
-                y: -150
-            },
-            "+=0.7"
-        )
+        .to(".container", 0.1, { visibility: "visible" })
+        .from(".one", 0.7, { opacity: 0, y: 10 })
+        .from(".two", 0.4, { opacity: 0, y: 10 })
+        .to(".one", 0.7, { opacity: 0, y: 10 }, "+=2.5")
+        .to(".two", 0.7, { opacity: 0, y: 10 }, "-=1")
+        .from(".three", 0.7, { opacity: 0, y: 10 })
+        .to(".three", 0.7, { opacity: 0, y: 10 }, "+=2")
+        .from(".four", 0.7, { scale: 0.2, opacity: 0 })
+        .from(".fake-btn", 0.3, { scale: 0.2, opacity: 0 })
+        .staggerTo(".hbd-chatbox span", 0.5, { visibility: "visible" }, 0.05)
+        .to(".fake-btn", 0.1, { backgroundColor: "rgb(127, 206, 248)" })
+        .to(".four", 0.5, { scale: 0.2, opacity: 0, y: -150 }, "+=0.7")
         .from(".idea-1", 0.7, ideaTextTrans)
         .to(".idea-1", 0.7, ideaTextTransLeave, "+=1.5")
         .from(".idea-2", 0.7, ideaTextTrans)
@@ -179,10 +119,7 @@ const animationTimeline = () => {
         .to(".idea-3", 0.7, ideaTextTransLeave, "+=1.5")
         .from(".idea-4", 0.7, ideaTextTrans)
         .to(".idea-4", 0.7, ideaTextTransLeave, "+=1.5")
-        .from(
-            ".idea-5",
-            0.7,
-            {
+        .from(".idea-5", 0.7, {
                 rotationX: 15,
                 rotationZ: -10,
                 skewY: "-5deg",
@@ -192,28 +129,9 @@ const animationTimeline = () => {
             },
             "+=0.5"
         )
-        .to(
-            ".idea-5 .smiley",
-            0.7,
-            {
-                rotation: 180,
-                x: 8
-            },
-            "+=0.4"
-        )
-        .to(
-            ".idea-5",
-            0.7,
-            {
-                scale: 0.2,
-                opacity: 0
-            },
-            "+=2"
-        )
-        .staggerFrom(
-            ".idea-6 span",
-            0.8,
-            {
+        .to(".idea-5 .smiley", 0.7, { rotation: 180, x: 8 }, "+=0.4")
+        .to(".idea-5", 0.7, { scale: 0.2, opacity: 0 }, "+=2")
+        .staggerFrom(".idea-6 span", 0.8, {
                 scale: 3,
                 opacity: 0,
                 rotation: 15,
@@ -221,22 +139,15 @@ const animationTimeline = () => {
             },
             0.2
         )
-        .staggerTo(
-            ".idea-6 span",
-            0.8,
-            {
+        .staggerTo(".idea-6 span", 0.8, {
                 scale: 3,
                 opacity: 0,
                 rotation: -15,
                 ease: Expo.easeOut
             },
-            0.2,
-            "+=1"
+            0.2, "+=1"
         )
-        .staggerFromTo(
-            ".baloons img",
-            2.5,
-            {
+        .staggerFromTo(".baloons img", 2.5, {
                 opacity: 0.9,
                 y: 1400
             },
@@ -246,10 +157,7 @@ const animationTimeline = () => {
             },
             0.2
         )
-        .from(
-            ".weegen-dp",
-            0.5,
-            {
+        .from(".weegen-dp", 0.5, {
                 scale: 3.5,
                 opacity: 0,
                 x: 25,
@@ -258,29 +166,17 @@ const animationTimeline = () => {
             },
             "-=2"
         )
-        .from(".hat", 0.5, {
-            x: -100,
-            y: 350,
-            rotation: -180,
-            opacity: 0
-        })
-        .staggerFrom(
-            ".wish-hbd span",
-            0.7,
-            {
+        .from(".hat", 0.5, { x: -100, y: 350, rotation: -180, opacity: 0 })
+        .staggerFrom(".wish-hbd span", 0.7, {
                 opacity: 0,
                 y: -50,
-                // scale: 0.3,
                 rotation: 150,
                 skewX: "30deg",
                 ease: Elastic.easeOut.config(1, 0.5)
             },
             0.1
         )
-        .staggerFromTo(
-            ".wish-hbd span",
-            0.7,
-            {
+        .staggerFromTo(".wish-hbd span", 0.7, {
                 scale: 1.4,
                 rotationY: 150
             },
@@ -293,20 +189,8 @@ const animationTimeline = () => {
             0.1,
             "party"
         )
-        .from(
-            ".wish h5",
-            0.5,
-            {
-                opacity: 0,
-                y: 10,
-                skewX: "-15deg"
-            },
-            "party"
-        )
-        .staggerTo(
-            ".eight svg",
-            1.5,
-            {
+        .from(".wish h5", 0.5, { opacity: 0, y: 10, skewX: "-15deg" }, "party")
+        .staggerTo(".eight svg", 1.5, {
                 visibility: "visible",
                 opacity: 0,
                 scale: 80,
@@ -315,24 +199,10 @@ const animationTimeline = () => {
             },
             0.3
         )
-        .to(".six", 0.5, {
-            opacity: 0,
-            y: 30,
-            zIndex: "-1"
-        })
+        .to(".six", 0.5, { opacity: 0, y: 30, zIndex: "-1" })
         .staggerFrom(".nine p", 1, ideaTextTrans, 1.2)
-        .to(
-            ".last-smile",
-            0.5,
-            {
-                rotation: 180
-            },
-            "+=1"
-        )
-        .from(
-            ".weegen2-dp",
-            0.5,
-            {
+        .to(".last-smile", 0.5, { rotation: 180 }, "+=1")
+        .from(".weegen2-dp", 0.5, {
                 scale: 3.5,
                 opacity: 0,
                 x: 25,
@@ -341,9 +211,6 @@ const animationTimeline = () => {
             },
             "-=2"
         );
-
-    // tl.seek("currentStep");
-    // tl.timeScale(2);
 
     // Restart Animation on click
     const replyBtn = document.getElementById("replay");
