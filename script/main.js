@@ -1,8 +1,4 @@
 let audio;
-document.getElementById('startAudio').addEventListener('click', function() {
-    enableAudio();
-    this.style.display = 'none';
-});
 
 // Audio playback function
 const playAudio = () => {
@@ -10,12 +6,14 @@ const playAudio = () => {
         audio = new Audio('music/hapi-na-bday-mo-pa.mp3');
         audio.loop = true;
     }
-    audio.play().catch(error => {
+    audio.play().then(() => {
+        console.log("Audio started playing");
+    }).catch(error => {
         console.log("Audio playback failed:", error);
     });
 };
 
-// Function to enable audio on first user interaction
+// Function to enable audio on user interaction
 const enableAudio = () => {
     playAudio();
     document.removeEventListener('click', enableAudio);
@@ -25,6 +23,17 @@ const enableAudio = () => {
 // Add event listeners for user interaction
 document.addEventListener('click', enableAudio);
 document.addEventListener('touchstart', enableAudio);
+
+// Wait for the DOM to be fully loaded
+document.addEventListener('DOMContentLoaded', () => {
+    const startAudioButton = document.getElementById('startAudio');
+    if (startAudioButton) {
+        startAudioButton.addEventListener('click', function() {
+            enableAudio();
+            this.style.display = 'none';
+        });
+    }
+});
 
 // Import the data to customize and insert them into page
 const fetchData = () => {
