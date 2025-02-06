@@ -1,11 +1,30 @@
+let audio;
+document.getElementById('startAudio').addEventListener('click', function() {
+    enableAudio();
+    this.style.display = 'none';
+});
+
 // Audio playback function
 const playAudio = () => {
-    const audio = new Audio('music/hapi-na-bday-mo-pa.mp3');
-    audio.loop = true;
+    if (!audio) {
+        audio = new Audio('music/hapi-na-bday-mo-pa.mp3');
+        audio.loop = true;
+    }
     audio.play().catch(error => {
         console.log("Audio playback failed:", error);
     });
 };
+
+// Function to enable audio on first user interaction
+const enableAudio = () => {
+    playAudio();
+    document.removeEventListener('click', enableAudio);
+    document.removeEventListener('touchstart', enableAudio);
+};
+
+// Add event listeners for user interaction
+document.addEventListener('click', enableAudio);
+document.addEventListener('touchstart', enableAudio);
 
 // Import the data to customize and insert them into page
 const fetchData = () => {
