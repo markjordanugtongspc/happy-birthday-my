@@ -1,3 +1,12 @@
+// Audio playback function
+const playAudio = () => {
+    const audio = new Audio('music/hapi-na-bday-mo-pa.mp3');
+    audio.loop = true;
+    audio.play().catch(error => {
+        console.log("Audio playback failed:", error);
+    });
+};
+
 // Import the data to customize and insert them into page
 const fetchData = () => {
     fetch("customize.json")
@@ -16,9 +25,10 @@ const fetchData = () => {
                 }
 
                 // Check if the iteration is over
-                // Run amimation if so
+                // Run animation if so
                 if (dataArr.length === dataArr.indexOf(customData) + 1) {
                     animationTimeline();
+                    playAudio(); // Start playing audio when animation begins
                 }
             });
         });
