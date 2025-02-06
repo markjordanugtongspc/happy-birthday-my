@@ -13,36 +13,26 @@ const playAudio = () => {
     });
 };
 
-// Function to enable audio on user interaction
+// Function to enable audio on any user interaction
 const enableAudio = () => {
     playAudio();
+    // Remove event listeners so this triggers only once.
     document.removeEventListener('click', enableAudio);
     document.removeEventListener('touchstart', enableAudio);
 };
 
-// Add event listeners for user interaction
+// Listen for any click or touch on the document to trigger audio
 document.addEventListener('click', enableAudio);
 document.addEventListener('touchstart', enableAudio);
 
-// Wait for the DOM to be fully loaded
-document.addEventListener('DOMContentLoaded', () => {
-    const startAudioButton = document.getElementById('startAudio');
-    if (startAudioButton) {
-        // When user clicks the Play Music button, enable audio and hide the button.
-        startAudioButton.addEventListener('click', function() {
-            enableAudio();
-            this.style.display = 'none';
-        });
-        // Automatically click the Play Music button after 2 seconds if not already hidden.
-        setTimeout(() => {
-            if (startAudioButton.style.display !== 'none') {
-                startAudioButton.click();
-            }
-        }, 2000);
+// Fallback: Auto-trigger audio after 2 seconds if no interaction occurs
+setTimeout(() => {
+    if (!audio || audio.paused) {
+        enableAudio();
     }
-});
+}, 2000);
 
-// Import the data to customize and insert them into page
+// Import the data to customize and insert them into the page
 const fetchData = () => {
     fetch("customize.json")
         .then(data => data.json())
@@ -61,7 +51,7 @@ const fetchData = () => {
                 // Check if iteration is complete, then run animations.
                 if (dataArr.length === dataArr.indexOf(customData) + 1) {
                     animationTimeline();
-                    playAudio(); // Start playing audio when animation begins
+                    playAudio(); // Start playing audio when animation begins (if not already started)
                 }
             });
         });
